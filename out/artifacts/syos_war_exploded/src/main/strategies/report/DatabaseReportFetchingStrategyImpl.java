@@ -15,13 +15,17 @@ public class DatabaseReportFetchingStrategyImpl implements FetchingStrategy {
     private static final String DAILY_SALES_QUERY = "SELECT t.*, b.bill_date, i.item_name, (i.item_price * t.quantity) AS total_price "
             + "FROM Transactions t "
             + "JOIN Bills b ON t.bill_id = b.bill_id "
-            + "JOIN Items i ON t.item_id = i.item_code "
+            + "JOIN Items i ON t.item_code = i.item_code "
             + "WHERE b.bill_date = ?";
-    private static final String RESHELVED_ITEMS_QUERY = "SELECT re.ItemCode, SUM(re.Quantity) AS total_quantity, i.item_name "
-            + "FROM ReshelvingEvents re "
-            + "JOIN Items i ON re.ItemCode = i.item_code "
-            + "WHERE DATE(re.ReshelvingTimestamp) = ? "
-            + "GROUP BY re.ItemCode, i.item_name";
+
+    private static final String RESHELVED_ITEMS_QUERY = "SELECT re.item_code, SUM(re.quantity) AS total_quantity, i.item_name "
+            + "FROM reshelvingevents re "
+            + "JOIN items i ON re.item_code = i.item_code "
+            + "WHERE DATE(re.reshelved_date) = ? "
+            + "GROUP BY re.item_code, i.item_name";
+
+
+
     private static final String BILL_QUERY = "SELECT bill_id, bill_date, total_price, discount_amount, tax_amount, final_price, cash_tendered, change_amount "
             + "FROM Bills WHERE bill_date = ?";
     private static final String ALL_BILLS_QUERY = "SELECT bill_id, bill_date, total_price, discount_amount, tax_amount, final_price, cash_tendered, change_amount "
@@ -86,7 +90,7 @@ public class DatabaseReportFetchingStrategyImpl implements FetchingStrategy {
             List<ReshelvedItemLogger> reshelvedItems = new ArrayList<>();
             while (rs.next()) {
                 ReshelvedItemLogger item = new ReshelvedItemLogger();
-                item.setItemCode(rs.getString("ItemCode"));
+                item.setItemCode(rs.getString("item_code"));
                 item.setQuantity(rs.getInt("total_quantity"));
                 item.setItemName(rs.getString("item_name"));
                 reshelvedItems.add(item);
