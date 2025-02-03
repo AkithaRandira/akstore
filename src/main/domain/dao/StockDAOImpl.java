@@ -9,19 +9,38 @@ import main.domain.model.ItemStock;
 import main.observer.Observer;
 
 public class StockDAOImpl implements StockDAO {
-    private static final String FIND_STOCK_BY_ITEM_CODE_SQL = "SELECT s.ItemStockID, s.item_code, i.item_name, s.DateOfPurchase, s.Quantity, s.ExpiryDate "
-            + "FROM ItemStock s JOIN Items i ON s.item_code = i.item_code WHERE s.item_code = ?";
-    private static final String UPDATE_STOCK_QUANTITY_SQL = "UPDATE ItemStock SET Quantity = ? WHERE ItemStockID = ?";
-    private static final String GET_ITEM_CODE_BY_ID_SQL = "SELECT item_code FROM ItemStock WHERE ItemStockID = ?";
-    private static final String GET_TOTAL_AVAILABLE_QUANTITY_SQL = "SELECT SUM(Quantity) AS TotalQuantity FROM (SELECT Quantity FROM Shelves WHERE item_code = ? UNION ALL SELECT Quantity FROM ItemStock WHERE item_code = ?) AS Total";
-    private static final String FIND_STOCK_BELOW_REORDER_LEVEL_SQL = "SELECT i.item_code AS item_code, i.item_name AS item_name, SUM(s.quantity) AS TotalQuantity FROM Items i JOIN ItemStock s ON i.item_code = s.item_code GROUP BY i.item_code, i.item_name HAVING SUM(s.quantity) < ?";
-    private static final String FIND_ALL_STOCK_DETAILS_SQL = "SELECT s.ItemStockID, s.item_code, i.item_name, s.DateOfPurchase, s.Quantity, s.ExpiryDate "
-            + "FROM ItemStock s JOIN Items i ON s.item_code = i.item_code";
-    private static final String FIND_EXPIRED_STOCK_SQL = "SELECT ItemStock.*, Items.item_name FROM ItemStock " +
-            "JOIN Items ON ItemStock.item_code = Items.item_code " +
-            "WHERE ItemStock.ExpiryDate < CURRENT_DATE";
-    private static final String DELETE_EXPIRED_STOCK_SQL = "DELETE FROM ItemStock WHERE ItemStockID = ?";
-    private static final String DELETE_STOCK_SQL = "DELETE FROM ItemStock WHERE ItemStockID = ?";
+    private static final String FIND_STOCK_BY_ITEM_CODE_SQL =
+            "SELECT s.id, s.item_code, i.item_name, s.date_of_purchase, s.quantity, s.expiry_date " +
+                    "FROM itemstock s JOIN items i ON s.item_code = i.item_code WHERE s.item_code = ?";
+
+    private static final String UPDATE_STOCK_QUANTITY_SQL =
+            "UPDATE itemstock SET quantity = ? WHERE id = ?";
+
+    private static final String GET_ITEM_CODE_BY_ID_SQL =
+            "SELECT item_code FROM itemstock WHERE id = ?";
+
+    private static final String GET_TOTAL_AVAILABLE_QUANTITY_SQL =
+            "SELECT SUM(quantity) AS TotalQuantity FROM (SELECT quantity FROM shelves WHERE item_code = ? UNION ALL SELECT quantity FROM itemstock WHERE item_code = ?) AS Total";
+
+    private static final String FIND_STOCK_BELOW_REORDER_LEVEL_SQL =
+            "SELECT i.item_code AS item_code, i.item_name AS item_name, SUM(s.quantity) AS TotalQuantity " +
+                    "FROM items i JOIN itemstock s ON i.item_code = s.item_code " +
+                    "GROUP BY i.item_code, i.item_name HAVING SUM(s.quantity) < ?";
+
+    private static final String FIND_ALL_STOCK_DETAILS_SQL =
+            "SELECT s.id, s.item_code, i.item_name, s.date_of_purchase, s.quantity, s.expiry_date " +
+                    "FROM itemstock s JOIN items i ON s.item_code = i.item_code";
+
+    private static final String FIND_EXPIRED_STOCK_SQL =
+            "SELECT itemstock.*, items.item_name FROM itemstock " +
+                    "JOIN items ON itemstock.item_code = items.item_code " +
+                    "WHERE itemstock.expiry_date < CURRENT_DATE";
+
+    private static final String DELETE_EXPIRED_STOCK_SQL =
+            "DELETE FROM itemstock WHERE id = ?";
+
+    private static final String DELETE_STOCK_SQL =
+            "DELETE FROM itemstock WHERE id = ?";
 
     private final Connection connection;
     private final List<Observer> observers = new CopyOnWriteArrayList<>();
@@ -46,7 +65,6 @@ public class StockDAOImpl implements StockDAO {
             System.out.println("No observers registered to notify.");
             return;
         }
-
         for (Observer observer : observers) {
             observer.update(itemCode, newQuantity);
         }
@@ -64,17 +82,17 @@ public class StockDAOImpl implements StockDAO {
             while (rs.next()) {
                 if (sql.equals(FIND_STOCK_BELOW_REORDER_LEVEL_SQL)) {
                     stocks.add(new ItemStock(
-                            rs.getString("item_code"),  // ✅ Fixed column name
+                            rs.getString("item_code"),
                             rs.getString("item_name"),
                             rs.getInt("TotalQuantity")));
                 } else {
                     stocks.add(new ItemStock(
-                            rs.getInt("ItemStockID"),
-                            rs.getString("item_code"),  // ✅ Fixed column name
+                            rs.getInt("id"),
+                            rs.getString("item_code"),
                             rs.getString("item_name"),
-                            rs.getInt("Quantity"),
-                            rs.getDate("DateOfPurchase"),
-                            rs.getDate("ExpiryDate")));
+                            rs.getInt("quantity"),
+                            rs.getDate("date_of_purchase"),
+                            rs.getDate("expiry_date")));
                 }
             }
         } catch (SQLException e) {
@@ -124,7 +142,7 @@ public class StockDAOImpl implements StockDAO {
             stmt.setInt(1, itemStockID);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("item_code");  // ✅ Fixed column name
+                    return rs.getString("item_code");
                 }
             }
         } catch (SQLException e) {
@@ -168,7 +186,6 @@ public class StockDAOImpl implements StockDAO {
             for (ItemStock stock : expiredStocks) {
                 stmt.setInt(1, stock.getItemStockID());
                 stmt.executeUpdate();
-                System.out.println();
                 System.out.println("Removed expired stock: " + stock.getCode() + ", Quantity: " + stock.getQuantity());
             }
         } catch (SQLException e) {
