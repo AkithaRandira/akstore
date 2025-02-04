@@ -30,22 +30,23 @@
             <script src="https://cdn.tailwindcss.com"></script>
         </head>
 
-        <body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
-            <div class="container mx-auto py-10 px-6">
-                <!-- Back to Main Menu link with arrow -->
-                <a href="<c:url value='/' />"
-                    class="text-blue-600 hover:underline mb-6 inline-flex items-center font-medium">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                        </path>
-                    </svg>
-                    Return to Main Menu
-                </a>
+        <body class="bg-gradient-to-br from-indigo-600 to-blue-400 text-white font-sans min-h-screen flex items-center justify-center">
+        <div class="max-w-4xl w-full bg-white bg-opacity-10 backdrop-blur-lg shadow-xl rounded-2xl p-10 border border-white border-opacity-20">
+        <!-- Back to Main Menu link with arrow -->
+            <a href="<c:url value='/' />"
+               class="bg-white bg-opacity-30 text-white hover:bg-indigo-600 hover:text-white font-semibold py-3 px-6 rounded-full shadow-lg transition duration-300 inline-flex items-center space-x-2 border border-white border-opacity-50 backdrop-blur-md mb-8">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <span>Return to Main Menu</span>
+            </a>
 
-                <h2 class="text-3xl font-bold mb-6 text-gray-900">Billing System</h2>
+            <h2 class="text-3xl font-bold text-gray-900">Billing System</h2>
 
-                <!-- Success/ Error Messages -->
+
+            <!-- Success/ Error Messages -->
                 <c:if test="${not empty sessionScope.successMessage}">
                     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
                         ${sessionScope.successMessage}
@@ -63,26 +64,33 @@
                 <!-- Step 1: Enter Customer Phone Number (Optional) -->
                 <c:if test="${empty sessionScope.customerPhone && sessionScope.skipPhone != true}">
                     <h3 class="text-2xl font-semibold mb-4">Enter Customer Phone Number or Skip</h3>
-                    <form action="billing" method="post" class="space-y-4 bg-white p-6 rounded-lg shadow-md">
-                        <div>
-                            <label for="customerPhone" class="block text-sm font-medium text-gray-700">Customer
-                                Phone
-                                Number:</label>
-                            <input type="text" name="customerPhone" id="customerPhone" placeholder="Enter phone number"
-                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                        </div>
+                    <form action="billing" method="post" class="space-y-6 bg-gray-50 p-8 rounded-lg shadow-lg w-full max-w-lg mx-auto">
+                          <div class="w-full">
+
+                <label for="customerPhone" class="block text-lg font-semibold text-gray-700">
+                                Customer Phone Number:
+                            </label>
+                              <input type="text" name="customerPhone" id="customerPhone" placeholder="Enter phone number"
+                                     class="mt-2 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-lg text-black bg-white bg-opacity-80 placeholder-gray-500">
+
+                          </div>
+
                         <input type="hidden" name="action" value="1">
                         <input type="hidden" name="operation" value="enterPhoneNumber">
-                        <div class="flex space-x-2 justify-end">
-                            <button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                                Next
-                            </button>
-                            <button type="submit" name="skipPhone" value="true"
-                                class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                                Skip Phone Number
-                            </button>
+                        <div class="flex justify-between items-center mt-4">
+                            <div></div> <!-- Empty div to push buttons to the right -->
+                            <div class="flex space-x-3">
+                                <button type="submit"
+                                        class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-5 rounded-lg shadow-md transition duration-300">
+                                    Next
+                                </button>
+                                <button type="submit" name="skipPhone" value="true"
+                                        class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-5 rounded-lg shadow-md transition duration-300">
+                                    Skip Phone Number
+                                </button>
+                            </div>
                         </div>
+
                     </form>
                 </c:if>
 
@@ -94,254 +102,294 @@
                 <!-- Step 2: Add Items to the Bill -->
                 <c:if test="${not empty sessionScope.customerPhone || sessionScope.skipPhone eq true}">
                     <c:if test="${empty sessionScope.addedItemsDone}">
-                        <h3 class="text-xl font-semibold mb-4">Add Items to Bill</h3>
+                        <h3 class="text-2xl font-semibold mb-6">🛒 Add Items to Bill</h3>
 
-                        <form action="billing" method="post" class="space-y-4 bg-white p-6 rounded-lg shadow-md">
+                        <form action="billing" method="post" class="bg-white p-8 rounded-xl shadow-md max-w-xl mx-auto space-y-6">
+                            <!-- Item Code Input -->
                             <div>
-                                <label for="itemCode" class="block text-sm font-medium text-gray-700">Item
-                                    Code:</label>
+                                <label for="itemCode" class="block text-lg font-medium text-gray-700">🔢 Item Code:</label>
                                 <input type="text" name="itemCode" id="itemCode" placeholder="Enter item code"
-                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                    required>
+                                       class="mt-2 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-lg text-black bg-white bg-opacity-80 placeholder-gray-500">
                             </div>
+
+                            <!-- Quantity Input -->
                             <div>
-                                <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity:</label>
+                                <label for="quantity" class="block text-lg font-medium text-gray-700">🔢 Quantity:</label>
                                 <input type="number" name="quantity" id="quantity" min="1"
-                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                    required>
+                                       class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-lg text-black caret-black bg-white bg-opacity-80 placeholder-gray-700"
+                                       required>
                             </div>
+
                             <input type="hidden" name="action" value="1">
                             <input type="hidden" name="operation" value="addItem">
-                            <div class="flex justify-end">
+
+                            <!-- Add Item Button -->
+                            <div class="flex justify-center">
                                 <button type="submit"
-                                    class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                                    Add Item
+                                        class="bg-indigo-600 hover:bg-indigo-800 text-white text-lg font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105">
+                                    ✅ Add Item
                                 </button>
                             </div>
                         </form>
                     </c:if>
 
-                    <!-- Display Added Items -->
+
+                <!-- Display Added Items -->
                     <c:if test="${not empty sessionScope.addedItems}">
-                        <h4 class="text-xl font-semibold mt-6 mb-4">Current Items in Bill</h4>
+                        <h4 class="text-2xl font-semibold mt-6 mb-4">🛍️ Current Items in Bill</h4>
 
-                        <!-- Table Header -->
-                        <div class="grid grid-cols-5 gap-4 bg-gray-200 text-gray-700 p-3 rounded-lg font-semibold">
-                            <div>Item Code</div>
-                            <div>Item Name</div>
-                            <div>Quantity</div>
-                            <div>Price</div>
-                            <div>Actions</div>
-                        </div>
+                        <div class="overflow-hidden border rounded-lg shadow-md bg-white">
+                            <table class="min-w-full bg-white">
+                                <!-- Table Header -->
+                                <thead>
+                                <tr class="bg-indigo-600 text-white text-lg">
+                                    <th class="py-3 px-6 text-left">Item Code</th>
+                                    <th class="py-3 px-6 text-left">Item Name</th>
+                                    <th class="py-3 px-6 text-left">Quantity</th>
+                                    <th class="py-3 px-6 text-left">Price</th>
+                                    <th class="py-3 px-6 text-center">Actions</th>
+                                </tr>
+                                </thead>
+                                <!-- Table Body -->
+                                <tbody class="text-gray-800">
+                                <c:forEach var="transaction" items="${sessionScope.addedItems}" varStatus="transactionStatus">
+                                    <c:forEach var="itemQuantity" items="${transaction.itemQuantities}">
+                                        <tr class="border-b hover:bg-gray-100 transition duration-200">
+                                            <!-- Item Details -->
+                                            <td class="py-3 px-6">${itemQuantity.item.code}</td>
+                                            <td class="py-3 px-6">${itemQuantity.item.name}</td>
+                                            <td class="py-3 px-6">${itemQuantity.quantity}</td>
+                                            <td class="py-3 px-6">${itemQuantity.item.price}</td>
 
-                        <!-- Table Body -->
-                        <ul class="space-y-2 bg-white p-6 rounded-lg shadow-md">
-                            <!-- Loop through transactions -->
-                            <c:forEach var="transaction" items="${sessionScope.addedItems}"
-                                varStatus="transactionStatus">
-                                <c:forEach var="itemQuantity" items="${transaction.itemQuantities}">
-                                    <li class="grid grid-cols-5 gap-4 items-center border-b py-2">
-                                        <!-- Item Details -->
-                                        <div>${itemQuantity.item.code}</div>
-                                        <div>${itemQuantity.item.name}</div>
-                                        <div>${itemQuantity.quantity}</div>
-                                        <div>${itemQuantity.item.price}</div>
+                                            <!-- Remove Button -->
+                                            <td class="py-3 px-6 text-center">
+                                                <form action="billing" method="post" class="flex justify-center items-center">
+                                                    <input type="hidden" name="action" value="1">
+                                                    <input type="hidden" name="operation" value="removeItem">
+                                                    <input type="hidden" name="itemCode" value="${itemQuantity.item.code}">
+                                                    <input type="hidden" name="transactionIndex" value="${transactionStatus.index}">
+                                                    <button type="submit"
+                                                            class="bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105 inline-flex items-center">
+                                                        Remove
+                                                    </button>
+                                                </form>
+                                            </td>
 
-                                        <!-- Remove Button -->
-                                        <div>
-                                            <form action="billing" method="post" style="display:inline;">
-                                                <input type="hidden" name="action" value="1">
-                                                <input type="hidden" name="operation" value="removeItem">
-                                                <input type="hidden" name="itemCode" value="${itemQuantity.item.code}">
-                                                <input type="hidden" name="transactionIndex"
-                                                    value="${transactionStatus.index}">
-                                                <button type="submit"
-                                                    class="text-red-600 hover:text-red-700 font-bold transition duration-300">
-                                                    Remove
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </li>
+                                        </tr>
+                                    </c:forEach>
                                 </c:forEach>
-                            </c:forEach>
-                        </ul>
+                                </tbody>
+                            </table>
+                        </div>
                     </c:if>
 
 
+
                     <c:if test="${not empty sessionScope.addedItems}">
-                        <form action="billing" method="post" class="mt-4">
+                        <form action="billing" method="post" class="mt-6 flex justify-center">
                             <input type="hidden" name="action" value="1">
                             <input type="hidden" name="operation" value="doneAddingItems">
-                            <div class="flex justify-end">
-                                <button type="submit"
-                                    class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                                    Done Adding Items
-                                </button>
-                            </div>
+                            <button type="submit"
+                                    class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105">
+                                ✅ Done Adding Items
+                            </button>
                         </form>
                     </c:if>
+
                 </c:if>
 
                 <!-- Step 3: Apply Loyalty Points and Discounts -->
                 <c:if test="${not empty sessionScope.addedItemsDone && not empty sessionScope.addedItems}">
-                    <h3 class="text-2xl font-semibold mb-4">Apply Loyalty Points and Discounts</h3>
-                    <form action="billing" method="post" class="space-y-4 bg-white p-6 rounded-lg shadow-md">
-                        <!-- Conditionally display loyalty points input if the customer phone number is provided -->
-                        <c:if test="${not empty sessionScope.customerPhone && sessionScope.skipPhone != true}">
-                            <div>
-                                <label for="loyaltyPoints" class="block text-sm font-medium text-gray-700">
-                                    Loyalty Points
-                                    <span class="font-bold">(Available:
-                                        ${sessionScope.customerLoyaltyPoints}):</span>
-                                </label>
-                                <input type="number" name="loyaltyPoints" id="loyaltyPoints"
-                                    placeholder="Enter loyalty points"
-                                    value="${sessionScope.loyaltyPoints != null ? loyaltyPoints : '0'}" min="0"
-                                    max="${sessionScope.customerLoyaltyPoints}"
-                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                        </c:if>
+                    <div class="bg-white p-6 rounded-lg shadow-lg mt-6 max-w-2xl mx-auto">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
+                            💰 Apply Discounts & Loyalty Points
+                        </h3>
 
-                        <div>
-                            <label for="discountRate" class="block text-sm font-medium text-gray-700">Discount Rate
-                                (0-100%):</label>
-                            <input type="number" name="discountRate" id="discountRate" placeholder="Enter discount rate"
-                                value="${sessionScope.discountRate != null ? discountRate : '0'}" min="0" max="100"
-                                required
-                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <input type="hidden" name="action" value="1">
-                        <input type="hidden" name="operation" value="applyDiscountAndLoyaltyPoints">
-                        <div class="flex justify-end">
-                            <button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                                Apply Discounts
-                            </button>
-                        </div>
-                    </form>
+                        <form action="billing" method="post" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Loyalty Points Input -->
+                                <c:if test="${not empty sessionScope.customerPhone && sessionScope.skipPhone != true}">
+                                    <div>
+                                        <label for="loyaltyPoints" class="block text-lg font-medium text-gray-700">
+                                            🎟️ Loyalty Points (Available: ${sessionScope.customerLoyaltyPoints})
+                                        </label>
+                                        <input type="number" name="loyaltyPoints" id="loyaltyPoints"
+                                               placeholder="Enter loyalty points"
+                                               value="${sessionScope.loyaltyPoints != null ? loyaltyPoints : '0'}" min="0"
+                                               max="${sessionScope.customerLoyaltyPoints}"
+                                               class="mt-2 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-lg text-black caret-black bg-white bg-opacity-80 placeholder-gray-700">
+
+                                    </div>
+                                </c:if>
+
+                                <!-- Discount Input -->
+                                <div>
+                                    <label for="discountRate" class="block text-lg font-medium text-gray-700">🏷️ Discount Rate (0-100%)</label>
+                                    <input type="number" name="discountRate" id="discountRate"
+                                           placeholder="Enter discount rate"
+                                           value="${sessionScope.discountRate != null ? discountRate : '0'}" min="0" max="100"
+                                           required
+                                           class="mt-2 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-lg text-black caret-black bg-white bg-opacity-80 placeholder-gray-700">
+
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="action" value="1">
+                            <input type="hidden" name="operation" value="applyDiscountAndLoyaltyPoints">
+
+                            <div class="flex justify-center mt-4">
+                                <button type="submit"
+                                        class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+                                    ✅ Apply Discounts
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </c:if>
+
+
 
                 <!-- Step 4: Display Total and Enter Cash Received -->
-                <c:if
-                    test="${not empty sessionScope.discountsApplied && empty sessionScope.errorMessage && sessionScope.finalAmount > 0 && not empty sessionScope.addedItemsDone && not empty sessionScope.addedItems}">
-                    <h3 class="text-xl font-semibold mt-6 mb-4">Total Amount: ${sessionScope.finalAmount}</h3>
-                    <form action="billing" method="post" class="space-y-4 bg-white p-6 rounded-lg shadow-md">
-                        <div>
-                            <label for="cashReceived" class="block text-sm font-medium text-gray-700">Cash
-                                Received:</label>
-                            <input type="number" name="cashReceived" id="cashReceived" placeholder="Enter cash received"
-                                value="${sessionScope.cashReceived}"
-                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                required>
-                        </div>
-                        <input type="hidden" name="action" value="1">
-                        <input type="hidden" name="operation" value="calculateChange">
-                        <div class="flex justify-end">
-                            <button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                                Calculate Change
-                            </button>
-                        </div>
-                    </form>
+                <c:if test="${not empty sessionScope.discountsApplied && empty sessionScope.errorMessage
+    && sessionScope.finalAmount > 0 && not empty sessionScope.addedItemsDone && not empty sessionScope.addedItems}">
+                    <div class="bg-white p-6 rounded-lg shadow-lg mt-6 max-w-2xl mx-auto">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-4 flex items-center justify-between">
+                            💵 Total Amount: <span class="text-indigo-600 font-bold text-3xl">${sessionScope.finalAmount}</span>
+                        </h3>
+
+                        <form action="billing" method="post" class="space-y-6">
+                            <div>
+                                <label for="cashReceived" class="block text-lg font-medium text-gray-700">
+                                    💰 Cash Received:
+                                </label>
+                                <input type="number" name="cashReceived" id="cashReceived"
+                                       placeholder="Enter cash received"
+                                       value="${sessionScope.cashReceived}"
+                                       class="mt-2 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-lg text-black caret-black bg-white bg-opacity-80 placeholder-gray-700 shadow-sm"
+                                       required>
+
+                            </div>
+                            <input type="hidden" name="action" value="1">
+                            <input type="hidden" name="operation" value="calculateChange">
+
+                            <div class="flex justify-center mt-4">
+                                <button type="submit"
+                                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+                                    💲 Calculate Change
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </c:if>
 
+
                 <!-- Step 5: Display Change and Finalize Transaction -->
-                <c:if
-                    test="${not empty sessionScope.changeAmount && not empty sessionScope.addedItems && not empty sessionScope.addedItemsDone && not empty sessionScope.bill}">
-                    <h3 class="text-xl font-semibold mt-6 mb-4">Change to Return: ${sessionScope.changeAmount}</h3>
+                <c:if test="${not empty sessionScope.changeAmount && not empty sessionScope.addedItems
+    && not empty sessionScope.addedItemsDone && not empty sessionScope.bill}">
+                    <div class="bg-white p-8 rounded-lg shadow-lg mt-6 max-w-3xl mx-auto">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-4 flex items-center justify-between">
+                            💰 Change to Return:
+                            <span class="text-green-600 font-bold text-3xl">${sessionScope.changeAmount}</span>
+                        </h3>
 
-                    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                        <h3 class="text-3xl font-semibold mb-6 text-gray-800">SYOS Bill Details</h3>
+                        <!-- Bill Details -->
+                        <div class="bg-gray-100 p-6 rounded-lg shadow-md mt-4">
+                            <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                                🧾 SYOS Bill Details
+                            </h3>
 
-                        <!-- Customer Information -->
-                        <div class="mb-6 text-lg">
-                            <p class="text-lg"><strong>Customer:</strong> ${sessionScope.customerName}</p>
-                            <p class="text-lg"><strong>Date:</strong> ${sessionScope.bill.formattedBillDate}</p>
-                        </div>
+                            <!-- Customer Information -->
+                            <div class="mt-4">
+                                <p class="text-lg text-black"><strong>👤 Customer:</strong> ${sessionScope.customerName}</p>
+                                <p class="text-lg text-black"><strong>📅 Date:</strong> ${sessionScope.bill.formattedBillDate}</p>
+                            </div>
 
-                        <!-- Items Table -->
-                        <h4 class="text-xl font-semibold mb-4 text-gray-700">Items Purchased</h4>
-                        <div class="overflow-hidden border rounded-lg">
-                            <table class="min-w-full bg-white">
-                                <thead>
-                                    <tr class="w-full bg-gray-200 text-gray-700 font-semibold text-left p-3">
-                                        <th class="text-lg py-3 px-6">Item Code</th>
-                                        <th class="text-lg py-3 px-6">Item Name</th>
-                                        <th class="text-lg py-3 px-6">Quantity</th>
-                                        <th class="text-lg py-3 px-6">Total Price</th>
+
+                            <!-- Items Purchased Table -->
+                            <h4 class="text-xl font-semibold mt-6 mb-4 text-gray-700">🛒 Items Purchased</h4>
+                            <div class="overflow-hidden border rounded-lg shadow-sm">
+                                <table class="min-w-full bg-white">
+                                    <thead class="bg-indigo-600 text-white">
+                                    <tr>
+                                        <th class="py-3 px-6 text-left text-lg">Item Code</th>
+                                        <th class="py-3 px-6 text-left text-lg">Item Name</th>
+                                        <th class="py-3 px-6 text-center text-lg">Quantity</th>
+                                        <th class="py-3 px-6 text-right text-lg">Total Price</th>
                                     </tr>
-                                </thead>
-                                <tbody class="text-gray-600">
+                                    </thead>
+                                    <tbody class="text-gray-800">
                                     <c:forEach var="transaction" items="${sessionScope.bill.transactions}">
                                         <c:forEach var="itemQuantity" items="${transaction.items}">
-                                            <tr class="border-b">
-                                                <td class="text-lg py-3 px-6">${itemQuantity.item.code}</td>
-                                                <td class="text-lg py-3 px-6">${itemQuantity.item.name}</td>
-                                                <td class="text-lg py-3 px-6">${itemQuantity.quantity}</td>
-                                                <td class="text-lg py-3 px-6">${itemQuantity.item.price *
-                                                    itemQuantity.quantity}</td>
+                                            <tr class="border-b hover:bg-gray-100">
+                                                <td class="py-3 px-6">${itemQuantity.item.code}</td>
+                                                <td class="py-3 px-6">${itemQuantity.item.name}</td>
+                                                <td class="py-3 px-6 text-center">${itemQuantity.quantity}</td>
+                                                <td class="py-3 px-6 text-right">${itemQuantity.item.price * itemQuantity.quantity}</td>
                                             </tr>
                                         </c:forEach>
                                     </c:forEach>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Price Summary -->
-                        <div class="mt-6 bg-gray-50 p-6 rounded-lg">
-                            <h4 class="text-xl font-semibold mb-4 text-gray-700">Summary</h4>
-                            <div class="grid grid-cols-4 text-lg">
-                                <p class="col-span-3 text-left"><strong>Sub Total:</strong></p>
-                                <p class="pl-8">${sessionScope.bill.totalAmount}</p>
-
-                                <p class="col-span-3 text-left"><strong>Discount:</strong></p>
-                                <p class="pl-8">${sessionScope.bill.discountAmount}</p>
-
-                                <p class="col-span-3 text-left"><strong>Tax:</strong></p>
-                                <p class="pl-8">${sessionScope.bill.taxAmount}</p>
-
-                                <c:if test="${not empty sessionScope.customerPhone}">
-                                    <p class="col-span-3 text-left"><strong>Loyalty Points Used:</strong></p>
-                                    <p class="pl-8">${sessionScope.bill.loyaltyPointsUsed}</p>
-                                </c:if>
-
-                                <p class="col-span-3 text-left"><strong>Final Price:</strong></p>
-                                <p class="pl-8 font-semibold">${sessionScope.bill.finalPrice}</p>
-
-                                <p class="col-span-3 text-left"><strong>Cash Tendered:</strong></p>
-                                <p class="pl-8">${sessionScope.cashReceived}</p>
-
-                                <p class="col-span-3 text-left"><strong>Change Given:</strong></p>
-                                <p class="pl-8 text-green-600 font-semibold">${sessionScope.changeAmount}</p>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
+                        <!-- Finalize Transaction Button -->
+                        <form action="billing" method="post">
+                            <input type="hidden" name="action" value="1">
+                            <input type="hidden" name="operation" value="finalizeTransaction">
+                            <div class="flex justify-center mt-6">
+                                <button type="submit"
+                                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+                                    ✅ Finalize and Save Transaction
+                                </button>
+                            </div>
+                        </form>
                     </div>
+                </c:if>
 
 
-                    <form action="billing" method="post">
+                <!-- Exit Billing -->
+
+
+                <!-- Cancel Billing Button with Modern Alert -->
+                <c:if test="${not empty sessionScope.addedItems || not empty sessionScope.addedItemsDone}">
+                    <form action="billing" method="post" id="cancelBillingForm" class="mt-6">
                         <input type="hidden" name="action" value="1">
-                        <input type="hidden" name="operation" value="finalizeTransaction">
-                        <div class="flex justify-end mt-2">
-                            <button type="submit"
-                                class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                                Finalize and Save Transaction
+                        <input type="hidden" name="operation" value="exitBilling">
+                        <div class="flex justify-center">
+                            <button type="button" onclick="confirmCancel()"
+                                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 flex items-center">
+                                Cancel Billing
                             </button>
                         </div>
                     </form>
                 </c:if>
 
-                <!-- Exit Billing -->
-                <form action="billing" method="post" class="mt-4">
-                    <input type="hidden" name="action" value="1">
-                    <input type="hidden" name="operation" value="exitBilling">
-                    <div class="flex justify-end">
-                        <button type="submit"
-                            class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                            Cancel Billing
-                        </button>
-                    </div>
-                </form>
+
+                <!-- Include SweetAlert2 Library -->
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                <!-- JavaScript Confirmation -->
+                <script>
+                    function confirmCancel() {
+                        Swal.fire({
+                            title: "Are you sure?",
+                            text: "All progress will be lost if you cancel this billing process.",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#d33",
+                            cancelButtonColor: "#3085d6",
+                            confirmButtonText: "Yes, Cancel!",
+                            cancelButtonText: "No, Go Back"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                document.getElementById("cancelBillingForm").submit();
+                            }
+                        });
+                    }
+                </script>
+
+
             </div>
         </body>
 

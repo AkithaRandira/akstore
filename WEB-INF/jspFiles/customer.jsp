@@ -100,90 +100,141 @@
 
         <body class="bg-gray-100 text-gray-900 font-sans">
             <div class="container mx-auto py-10">
-                <a href="<c:url value='/' />"
-                    class="text-blue-600 hover:underline mb-6 inline-flex items-center font-medium">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                        </path>
+                <div class="flex items-center space-x-3 mb-6">
+                    <a href="<c:url value='/' />"
+                       class="text-blue-600 hover:underline inline-flex items-center text-lg font-semibold transition duration-300 hover:text-blue-800">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        Return to Main Menu
+                    </a>
+                </div>
+
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-8 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a4 4 0 00-8 0v2M5 21h14M9 17h6M9 12h6"></path>
                     </svg>
-                    Return to Main Menu
-                </a>
+                    Customer Management
+                </h2>
 
-
-                <h2 class="text-3xl font-bold mb-6">Customer Management</h2>
 
                 <!-- Display error messages -->
                 <c:if test="${not empty errorMessage}">
-                    <div class="bg-red-100 text-red-700 border border-red-400 p-4 mb-4 rounded">
-                        <p>${errorMessage}</p>
+                    <div class="flex items-center bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md mb-6">
+                        <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <p class="text-lg">${errorMessage}</p>
                     </div>
                 </c:if>
 
-                <!-- Display success messages -->
                 <c:if test="${not empty successMessage}">
-                    <div class="bg-green-100 text-green-700 border border-green-400 p-4 mb-4 rounded">
-                        <p>${successMessage}</p>
+                    <div class="flex items-center bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-md mb-6">
+                        <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <p class="text-lg">${successMessage}</p>
                     </div>
                 </c:if>
 
-                <div class="flex items-center mb-6 space-x-4">
+
+                <div class="bg-white p-6 rounded-lg shadow-lg flex items-center justify-between mb-6">
                     <button id="addCustomerBtn"
-                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow">Add
-                        Customer</button>
-                    <input type="text" id="searchPhoneNumber" placeholder="Enter Phone Number"
-                        class="border border-gray-300 rounded-lg py-2 px-4 shadow-sm focus:ring focus:ring-blue-200">
-                    <button id="searchCustomerBtn"
-                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow">Search</button>
-                    <button id="clearSearchBtn"
-                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow">Clear
-                        Search</button>
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Customer
+                    </button>
+
+                    <div class="flex space-x-3">
+                        <input type="text" id="searchPhoneNumber" placeholder="Enter Phone Number"
+                               class="border border-gray-300 rounded-lg py-3 px-4 shadow-md focus:ring-2 focus:ring-blue-300 text-lg w-64">
+                        <button id="searchCustomerBtn"
+                                class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300">
+                            Search
+                        </button>
+                        <button id="clearSearchBtn"
+                                class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300">
+                            Clear Search
+                        </button>
+                    </div>
                 </div>
 
-                <table id="customerTable" class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Phone Number</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Loyalty Points</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="customerTableBody" class="bg-white divide-y divide-gray-200">
-                        <c:forEach var="customer" items="${customers}">
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">${customer.id}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">${customer.name}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">${customer.email}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">${customer.phoneNumber}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">${customer.loyaltyPoints}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <button
-                                        class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-lg shadow editCustomerBtn"
-                                        data-customer='{"id":"${customer.id}", "name":"${customer.name}", "email":"${customer.email}", "phoneNumber":"${customer.phoneNumber}", "loyaltyPoints":"${customer.loyaltyPoints}", "version":"${customer.version}"}'>
-                                        Edit
-                                    </button>
-                                    <button
-                                        class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow deleteCustomerBtn"
-                                        data-customerId="${customer.id}">Delete</button>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${customers == null || customers.isEmpty()}">
-                            <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">No customers found.</td>
-                            </tr>
-                        </c:if>
-                    </tbody>
-                </table>
+
+
+
+
+                    <div class="overflow-x-auto">
+                        <!-- Modern Customer Table -->
+                        <div class="bg-white p-6 rounded-lg shadow-lg overflow-hidden">
+                            <h3 class="text-2xl font-semibold mb-4 flex items-center text-gray-900">
+                                <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 11l3 3L22 4"></path>
+                                </svg>
+                                Customer List
+                            </h3>
+
+                            <table id="customerTable" class="min-w-full bg-white rounded-xl shadow-xl border">
+                                <thead class="bg-indigo-600 text-white">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold">ID</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold">Name</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold">Email</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold">Phone Number</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold">Loyalty Points</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody id="customerTableBody" class="bg-white divide-y divide-gray-300">
+                                <c:forEach var="customer" items="${customers}">
+                                    <tr class="hover:bg-gray-100 transition duration-300">
+                                        <td class="px-6 py-4">${customer.id}</td>
+                                        <td class="px-6 py-4">${customer.name}</td>
+                                        <td class="px-6 py-4">${customer.email}</td>
+                                        <td class="px-6 py-4">${customer.phoneNumber}</td>
+                                        <td class="px-6 py-4 font-semibold text-indigo-600">${customer.loyaltyPoints}</td>
+                                        <td class="px-6 py-4 flex space-x-2">
+                                            <button class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg shadow flex items-center editCustomerBtn"
+                                                    data-customer='{"id":"${customer.id}", "name":"${customer.name}", "email":"${customer.email}", "phoneNumber":"${customer.phoneNumber}", "loyaltyPoints":"${customer.loyaltyPoints}", "version":"${customer.version}"}'>
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M12 4v16m8-8H4"></path>
+                                                </svg>
+                                                Edit
+                                            </button>
+                                            <button class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow flex items-center deleteCustomerBtn"
+                                                    data-customerId="${customer.id}">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                <c:if test="${customers == null || customers.isEmpty()}">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No customers found.</td>
+                                    </tr>
+                                </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
 
                 <!-- Customer Add/Edit Popup -->
                 <div id="customerPopup"
