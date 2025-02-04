@@ -71,7 +71,7 @@ public class DatabaseReportFetchingStrategyImpl implements FetchingStrategy {
                 Transaction transaction = new TransactionBuilder()
                         .setId(rs.getInt("transaction_id"))
                         .setBillId(rs.getInt("bill_id"))
-                        .setItemId(rs.getString("item_id"))
+                        .setItemId(rs.getString("item_code"))
                         .setQuantity(rs.getInt("quantity"))
                         .setTotalPrice(rs.getDouble("total_price"))
                         .setItemName(rs.getString("item_name"))

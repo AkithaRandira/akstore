@@ -16,7 +16,7 @@ public class BillDAOImpl implements BillDAO {
     private static final String INSERT_BILL_SQL_WITH_CUSTOMER = "INSERT INTO Bills (bill_date, total_price, discount_amount, tax_amount, loyalty_points_used, final_price, cash_tendered, change_amount, customer_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_BILL_SQL_WITHOUT_CUSTOMER = "INSERT INTO Bills (bill_date, total_price, discount_amount, tax_amount, final_price, cash_tendered, change_amount) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    private static final String INSERT_TRANSACTION_SQL = "INSERT INTO Transactions (bill_id, item_id, quantity, total_price) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_TRANSACTION_SQL = "INSERT INTO Transactions (bill_id, item_code, quantity, total_price) VALUES (?, ?, ?, ?)";
 
     private Connection connection;
 

@@ -27,7 +27,7 @@ public class ReplenishShelvesImpl implements ReplenishShelves {
     private static final long TIMEOUT_DURATION = 2; // 2 seconds
 
     public ReplenishShelvesImpl(StockDAO stockDAO, ShelvesDAO shelvesDAO,
-            ReshelvingEventLogger reshelvingEventLogger, int minQty, int maxCapacity, int endOfDayQty) {
+                                ReshelvingEventLogger reshelvingEventLogger, int minQty, int maxCapacity, int endOfDayQty) {
         this.stockDAO = stockDAO;
         this.shelvesDAO = shelvesDAO;
         this.reshelvingEventLogger = reshelvingEventLogger;
@@ -41,7 +41,6 @@ public class ReplenishShelvesImpl implements ReplenishShelves {
         try {
             if (lock.tryLock(TIMEOUT_DURATION, TimeUnit.SECONDS)) {
                 try {
-                    // Always fetch the latest shelf quantity from the database
                     List<Shelf> shelves = shelvesDAO.findShelvesByItemCode(itemCode);
                     int currentQuantity = shelves.stream().mapToInt(Shelf::getQuantity).sum();
 
@@ -67,18 +66,15 @@ public class ReplenishShelvesImpl implements ReplenishShelves {
         try {
             if (lock.tryLock(TIMEOUT_DURATION, TimeUnit.SECONDS)) {
                 try {
-                    // Re-fetch the latest shelf quantity after acquiring the lock
                     List<Shelf> updatedShelves = shelvesDAO.findShelvesByItemCode(itemCode);
                     int updatedCurrentQuantity = updatedShelves.stream().mapToInt(Shelf::getQuantity).sum();
 
-                    // Recheck if replenishment is still needed based on the updated quantity
                     if (updatedCurrentQuantity >= targetQuantity) {
                         System.out.println("Replenishment not needed, updated current quantity: "
                                 + updatedCurrentQuantity + " for item: " + itemCode);
                         return; // Exit, no need for replenishment
                     }
 
-                    // Fetch stock items to replenish
                     List<ItemStock> stocks = stockDAO.findStockByItemCode(itemCode);
                     if (stocks == null || stocks.isEmpty()) {
                         System.out.println("No stocks found for item code: " + itemCode);
@@ -88,39 +84,33 @@ public class ReplenishShelvesImpl implements ReplenishShelves {
                     stocks.sort(Comparator.comparing(ItemStock::getStockExpiryDate)
                             .thenComparing(ItemStock::getStockDateOfPurchase));
 
-                    // Recalculate needed quantity based on the rechecked shelf quantity
                     int neededQuantity = Math.min(maxShelfCapacity - updatedCurrentQuantity,
                             targetQuantity - updatedCurrentQuantity);
 
                     for (ItemStock stock : stocks) {
-                        if (neededQuantity <= 0)
-                            break;
+                        if (neededQuantity <= 0) break;
 
                         int quantityToMove = Math.min(neededQuantity, stock.getQuantity());
                         Date currentDate = new Date(System.currentTimeMillis());
 
-                        // Check for an existing shelf with the same expiry date
-                        Shelf existingShelf = shelvesDAO.findShelfByItemCodeAndExpiryDate(itemCode,
-                                stock.getStockExpiryDate());
+                        Shelf existingShelf = shelvesDAO.findShelfByItemCodeAndExpiryDate(itemCode, stock.getStockExpiryDate());
                         if (existingShelf != null) {
                             existingShelf.setQuantity(existingShelf.getQuantity() + quantityToMove);
                             existingShelf.setMovedDate(currentDate);
                             shelvesDAO.updateShelf(existingShelf);
                         } else {
-                            Shelf newShelf = new Shelf(itemCode, quantityToMove, currentDate,
-                                    stock.getStockExpiryDate());
+                            Shelf newShelf = new Shelf(itemCode, quantityToMove, currentDate, stock.getStockExpiryDate());
                             shelvesDAO.addShelf(newShelf);
                         }
 
                         stockDAO.updateStockQuantity(stock.getItemStockID(), stock.getQuantity() - quantityToMove);
                         neededQuantity -= quantityToMove;
 
-                        // Update the cache and log the event
                         shelfQuantityCache.put(itemCode, shelfQuantityCache.getOrDefault(itemCode, 0) + quantityToMove);
                         reshelvingEventLogger.logReshelvingEvent(itemCode, quantityToMove);
                     }
                 } finally {
-                    lock.unlock(); // Release lock after replenishment
+                    lock.unlock();
                 }
             } else {
                 System.err.println("Could not acquire lock for replenishing shelves for item: " + itemCode);
